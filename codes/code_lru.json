@@ -1,0 +1,4 @@
+{
+  "goal": "Generate a function that returns the LRU cache implementation",
+  "test_file": "tests/test_lru.py"
+}

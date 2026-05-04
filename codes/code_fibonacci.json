@@ -1,0 +1,4 @@
+{
+  "goal": "Generate a function that returns the fibonacci series up to n numbers",
+  "test_file": "tests/test_fibonacci.py"
+}
