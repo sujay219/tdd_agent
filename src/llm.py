@@ -6,8 +6,10 @@ import httpx
 # Allow overriding via environment for easier deployments and testing
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434/api/generate")
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "qwen2.5:7b")
-OLLAMA_NUM_PREDICT = int(os.getenv("OLLAMA_NUM_PREDICT", "1024"))
 
+# 1024 context means 40-50 lines, increase the context accordingly,
+# if you expect longer responses (e.g. more complex code or detailed plans)
+OLLAMA_NUM_PREDICT = int(os.getenv("OLLAMA_NUM_PREDICT", "1024"))
 
 def estimate_tokens(text: str) -> int:
   """Approximate token count using a simple word/punctuation split."""

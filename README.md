@@ -81,13 +81,14 @@ All agents operate on a single state dictionary:
 ## 📁 File Structure
 
 ```
-sk_coder/
+tdd_agent/
 ├── README.md              # This file
 ├── LICENSE                # MIT License
-├── main.py                # CLI entry point + LoopController
-├── llm.py                 # LLM interface (Ollama)
-├── agents.py              # Planner, Coder, Executor classes
-├── planner.py             # Legacy entry point (deprecated)
+├── src/
+│   ├── main.py            # CLI entry point + LoopController
+│   ├── llm.py             # LLM interface (Ollama)
+│   ├── agents.py          # Planner, Coder, Executor classes
+│   └── planner.py         # Legacy entry point (deprecated)
 ├── codes/                 # Task configuration JSONs
 │   ├── code_lru.json      # LRU cache task config
 │   └── code_fibonacci.json # Fibonacci task config
@@ -141,10 +142,10 @@ The system reads task configuration from JSON files in `codes/` directory.
 
 ```bash
 # Run fibonacci task
-python3 main.py fibonacci
+python3 src/main.py fibonacci
 
 # Run LRU cache task
-python3 main.py lru
+python3 src/main.py lru
 ```
 
 This will:
@@ -217,7 +218,7 @@ export OLLAMA_MODEL="qwen2.5-coder-14b"
 export OLLAMA_NUM_PREDICT="2048"
 
 # Now run tasks
-python3 main.py fibonacci
+python3 src/main.py fibonacci
 ```
 
 ### Troubleshooting Incomplete Code
@@ -225,8 +226,8 @@ python3 main.py fibonacci
 If generated code is truncated (e.g., `if __name`), increase `OLLAMA_NUM_PREDICT`:
 
 ```bash
-export OLLAMA_NUM_PREDICT=4096
-python3 main.py fibonacci
+export OLLAMA_NUM_PREDICT=1024
+python3 src/main.py fibonacci
 ```
 
 Check logs for `done_reason=length` to confirm truncation occurred.
@@ -268,7 +269,7 @@ Create a config file in `codes/`:
 ### Step 3: Run
 
 ```bash
-python3 main.py my_feature
+python3 src/main.py my_feature
 ```
 
 This will:
@@ -361,7 +362,7 @@ This will:
 ### LLM timeouts
 - Network issue or Ollama server overloaded
 - Try smaller model: `export OLLAMA_MODEL="qwen:7b"`
-- Increase timeout: Modify `llm.py` `timeout = 300.0` (default: 180s)
+- Increase timeout: Modify `src/llm.py` `timeout = 300.0` (default: 180s)
 
 ### Truncated code generation
 - Check `done_reason` in logs. If `done_reason=length`, token limit was hit

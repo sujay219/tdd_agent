@@ -14,7 +14,7 @@ async def main():
         print("Usage: python planner.py <test_file_path> <goal>")
         print("Example: python planner.py tests/test_fibonacci.py 'Generate fibonacci function'")
         sys.exit(1)
-    
+
     test_file = sys.argv[1]
     goal = sys.argv[2]
 
@@ -24,7 +24,7 @@ async def main():
     # Run the system
     controller = LoopController(test_file, max_iterations=5)
     final_state = await controller.run(goal)
-    
+
     # Exit with appropriate code
     if "✓" in final_state.get("status", ""):
         sys.exit(0)

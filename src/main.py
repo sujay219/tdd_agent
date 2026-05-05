@@ -41,7 +41,7 @@ def load_task_config(task_code: str) -> Dict[str, str]:
     return {
         "goal": goal,
         "test_file": test_file,
-        "output_file": f"{task}.py",
+        "output_file": f"generated/{task}.py",
     }
 
 
@@ -53,21 +53,21 @@ class LoopController:
     3. Executor runs tests and captures results
     4. Loop back if tests fail (up to max iterations)
     """
-    
+
     def __init__(self, test_module_path: str, max_iterations: int = 5):
         self.test_module_path = test_module_path
         self.max_iterations = max_iterations
         self.planner = Planner()
         self.coder = Coder()
         self.executor = Executor(test_module_path)
-    
+
     async def run(self, goal: str) -> Dict[str, Any]:
         """
         Run the multi-agent loop.
-        
+
         Args:
             goal: The coding task to accomplish
-        
+
         Returns:
             Final state dict
         """
@@ -80,34 +80,34 @@ class LoopController:
             "status": "Initialized",
             "iteration": 0
         }
-        
+
         print("\n" + "="*70)
         print("🚀 TDD Multi-Agent System Started")
         print("="*70)
         self._log_state(state)
-        
+
         # Main loop
         for iteration in range(1, self.max_iterations + 1):
             state["iteration"] = iteration
             print(f"\n{'='*70}")
             print(f"Iteration {iteration}/{self.max_iterations}")
             print(f"{'='*70}")
-            
+
             # Step 1: Planner
             print("\n[1/3] Planner → Creating plan...")
             state = await self.planner(state)
             self._log_state(state)
-            
+
             # Step 2: Coder
             print("\n[2/3] Coder → Writing code...")
             state = await self.coder(state)
             print(f"Generated code ({len(state['code'])} chars)")
-            
+
             # Step 3: Executor
             print("\n[3/3] Executor → Running tests...")
             state = await self.executor(state)
             self._log_state(state)
-            
+
             # Check if tests passed
             if all_tests_passed(state):
                 print("\n" + "🎉 SUCCESS! All tests passed!")
@@ -121,24 +121,24 @@ class LoopController:
             # Max iterations reached without passing tests
             state["status"] = f"✗ Failed to pass tests after {self.max_iterations} iterations"
             print(f"\n❌ FAILED: Max iterations ({self.max_iterations}) reached")
-        
+
         print("\n" + "="*70)
         print("📋 Final State")
         print("="*70)
         self._log_state(state)
-        
+
         return state
-    
+
     def _log_state(self, state: Dict[str, Any]):
         """Pretty-print the current state."""
         print(f"\nStatus: {state.get('status', 'N/A')}")
-        
+
         plan = state.get("plan", [])
         if plan:
             print(f"\nPlan ({len(plan)} steps):")
             for i, step in enumerate(plan, 1):
                 print(f"  {i}. {step}")
-        
+
         code = state.get("code", "")
         if code:
             lines = code.split('\n')
@@ -153,7 +153,7 @@ class LoopController:
                 print(f"  ... ({len(lines) - 20} more lines) ...")
                 for line in lines[-5:]:
                     print(f"  {line}")
-        
+
         results = state.get("test_results", "")
         if results:
             print(f"\nTest Results:")
@@ -183,17 +183,17 @@ async def main():
     print(f"Selected task: {task_code}")
     print(f"Config goal: {goal}")
     print(f"Config test file: {test_path}")
-    
+
     controller = LoopController(test_path)
     final_state = await controller.run(goal)
-    
+
     # Optionally save code to file
     code = final_state.get("code", "")
     if code:
         with open(output_file, "w", encoding="utf-8") as f:
             f.write(code)
         print(f"\n✓ Generated code saved to {output_file}")
-    
+
     return final_state
 
 if __name__ == "__main__":
